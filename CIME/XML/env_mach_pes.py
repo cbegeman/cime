@@ -150,14 +150,14 @@ class EnvMachPes(EnvBase):
 
     def get_total_nodes(self, total_tasks, max_thread_count):
         """
-        Return (num_active_nodes, num_spare_nodes)
+        Return (num_active_nodes, num_spare_nodes, num_db_nodes)
         """
         # threads have already been included in nuopc interface
         if self._comp_interface == "nuopc" and self.get_value("ESMF_AWARE_THREADING"):
             max_thread_count = 1
         tasks_per_node = self.get_tasks_per_node(total_tasks, max_thread_count)
         num_nodes = int(math.ceil(float(total_tasks) / tasks_per_node))
-        return num_nodes, self.get_spare_nodes(num_nodes)
+        return num_nodes, self.get_spare_nodes(num_nodes), self.get_db_nodes()
 
     def get_spare_nodes(self, num_nodes):
         force_spare_nodes = self.get_value("FORCE_SPARE_NODES")
@@ -172,5 +172,12 @@ class EnvMachPes(EnvBase):
                 return 10  # Never provide more than 10 spare nodes
             else:
                 return ten_pct
+        else:
+            return 0
+
+    def get_db_nodes(self):
+        db_nodes = self.get_value("DB_NODES")
+        if db_nodes != -999 and db_nodes != None:
+            return db_nodes
         else:
             return 0

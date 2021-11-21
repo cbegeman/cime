@@ -178,6 +178,7 @@ class Case(object):
         self.ngpus_per_node = 0
         self.num_nodes = None
         self.spare_nodes = None
+        self.db_nodes = 0
         self.tasks_per_numa = None
         self.cores_per_task = None
         self.srun_binding = None
@@ -255,16 +256,19 @@ class Case(object):
             ) = get_aprun_cmd_for_case(self, "e3sm.exe")
             self.spare_nodes = env_mach_pes.get_spare_nodes(self.num_nodes)
             self.num_nodes += self.spare_nodes
+            self.db_nodes = env_mach_pes.get_db_nodes()
+            self.num_nodes += self.db_nodes
         else:
             self.total_tasks = env_mach_pes.get_total_tasks(comp_classes) + self.iotasks
             self.tasks_per_node = env_mach_pes.get_tasks_per_node(
                 self.total_tasks, self.thread_count
             )
 
-            self.num_nodes, self.spare_nodes = env_mach_pes.get_total_nodes(
+            self.num_nodes, self.spare_nodes, self.db_nodes = env_mach_pes.get_total_nodes(
                 self.total_tasks, self.thread_count
             )
             self.num_nodes += self.spare_nodes
+            self.num_nodes += self.db_nodes
 
         logger.debug(
             "total_tasks {} thread_count {}".format(self.total_tasks, self.thread_count)
@@ -2018,7 +2022,7 @@ directory, NOT in this subdirectory."""
             )[0:2]
             if job in ("case.run", "case.test"):
                 expect(
-                    (num_nodes + self.spare_nodes) == self.num_nodes,
+                    (num_nodes + self.spare_nodes + self.db_nodes) == self.num_nodes,
                     "Not using optimized num nodes",
                 )
             return self.get_resolved_value(
