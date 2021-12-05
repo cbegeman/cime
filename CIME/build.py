@@ -1,7 +1,7 @@
 """
 functions for building CIME models
 """
-import glob, shutil, time, threading, subprocess
+import os, glob, shutil, time, threading, subprocess
 from pathlib import Path
 from CIME.XML.standard_module_setup import *
 from CIME.utils import (
@@ -56,6 +56,7 @@ _CMD_ARGS_FOR_BUILD = (
     "CISM_USE_TRILINOS",
     "USE_TRILINOS",
     "USE_ALBANY",
+    "USE_SMARTSIM",
     "USE_PETSC",
 )
 
@@ -1105,6 +1106,7 @@ def _case_build_impl(
     cism_use_trilinos = case.get_value("CISM_USE_TRILINOS")
     mali_use_albany = case.get_value("MALI_USE_ALBANY")
     mach = case.get_value("MACH")
+    db_nodes = case.get_value("DB_NODES")
 
     # Load some params into env
     os.environ["BUILD_THREADED"] = stringify_bool(build_threaded)
@@ -1146,6 +1148,22 @@ def _case_build_impl(
 
     use_albany = stringify_bool(mali_use_albany)
     case.set_value("USE_ALBANY", use_albany)
+
+    #if cime_model == "e3sm" and mach == "badger":# and db_nodes > 1:
+    #case.set_value("USE_SMARTSIM",stringify_bool(True))
+
+    smartredis_lib = os.getenv("SMARTREDIS_PATH")
+    expect(smartredis_lib," Expect path to SMARTREDIS in env variable SMARTREDIS_PATH - is the module loaded?")
+    smartredis_lib = os.getenv("SMARTREDIS_LIB")
+    expect(smartredis_lib," Expect path to SMARTREDIS in env variable SMARTREDIS_LIB - is the module loaded?")
+
+    fortran_src_path = os.getenv("SMARTREDIS_FSRC")
+    expect(fortran_src_path," Expect path to SMARTREDIS fortran source code in env variable SMARTREDIS_FSRC - is the module loaded?")
+    expect(os.path.isdir(fortran_src_path), "Could not find or read directory {}".format(fortran_src_path))
+
+    redis_include_path = os.getenv("SMARTREDIS_INCLUDE")
+    expect(redis_include_path," Expect path to SMARTREDIS include in env variable SMARTREDIS_INCLUDE")
+    expect(os.path.isdir(redis_include_path), "Could not find or read directory {}".format(redis_include_path))
 
     # Load modules
     case.load_env()
