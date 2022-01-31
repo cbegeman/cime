@@ -1141,19 +1141,19 @@ def _case_build_impl(
     use_albany = stringify_bool(mali_use_albany)
     case.set_value("USE_ALBANY", use_albany)
 
-    if cime_model == "e3sm" and mach == "badger" and db_nodes > 1:
-       case.set_value("USE_SMARTSIM",stringify_bool(True))
+    #if cime_model == "e3sm" and mach == "badger":# and db_nodes > 1:
+    #case.set_value("USE_SMARTSIM",stringify_bool(True))
 
-       smartredis_lib = os.getenv("SMARTREDIS_LIB")
-       expect(smartredis_lib," Expect path to SMARTREDIS in env variable SMARTREDIS_LIB - is the module loaded?")
+    smartredis_lib = os.getenv("SMARTREDIS_LIB")
+    expect(smartredis_lib," Expect path to SMARTREDIS in env variable SMARTREDIS_LIB - is the module loaded?")
 
-       fortran_src_path = os.getenv("SMARTREDIS_FSRC")
-       expect(fortran_src_path," Expect path to SMARTREDIS fortran source code in env variable SMARTREDIS_FSRC - is the module loaded?")
-       expect(os.path.isdir(fortran_src_path), "Could not find or read directory {}".format(fortran_src_path))
+    fortran_src_path = os.getenv("SMARTREDIS_FSRC")
+    expect(fortran_src_path," Expect path to SMARTREDIS fortran source code in env variable SMARTREDIS_FSRC - is the module loaded?")
+    expect(os.path.isdir(fortran_src_path), "Could not find or read directory {}".format(fortran_src_path))
 
-       redis_include_path = os.getenv("SMARTREDIS_INCLUDE")
-       expect(redis_include_path," Expect path to SMARTREDIS include in env variable SMARTREDIS_INCLUDE")
-       expect(os.path.isdir(redis_include_path), "Could not find or read directory {}".format(redis_include_path))
+    redis_include_path = os.getenv("SMARTREDIS_INCLUDE")
+    expect(redis_include_path," Expect path to SMARTREDIS include in env variable SMARTREDIS_INCLUDE")
+    expect(os.path.isdir(redis_include_path), "Could not find or read directory {}".format(redis_include_path))
 
     # Load modules
     case.load_env()

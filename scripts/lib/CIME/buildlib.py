@@ -117,7 +117,7 @@ def run_gmake(case, compclass, compname, libroot, bldroot, libname="", user_cppd
     if user_cppdefs:
         cmd = cmd + "USER_CPPDEFS='{}'".format(user_cppdefs)
 
-    use_smartsim = case.get_value("USE_SMARTSIM")
+    use_smartsim = True #case.get_value("USE_SMARTSIM")
     if use_smartsim:
         cmd = cmd + " USE_SMARTSIM=TRUE "
         print("Building with smartredis library")
