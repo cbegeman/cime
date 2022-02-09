@@ -533,6 +533,7 @@
   <entry id="BUILD_LIB_FILE">
     <type>char</type>
     <values>
+      <value lib="smartredis">$CIMEROOT/src/build_scripts/buildlib.smartredis</value>
       <value lib="kokkos">$CIMEROOT/src/build_scripts/buildlib.kokkos</value>
       <value lib="gptl">$SRCROOT/share/build/buildlib.gptl</value>
       <value lib="pio">$CIMEROOT/src/build_scripts/buildlib.pio</value>

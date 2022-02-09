@@ -726,6 +726,8 @@ def _build_libraries(
         libs = ["gptl", "mct", "pio", "csm_share"]
     elif case.get_value("MODEL") == "cesm":
         libs = ["gptl", "mct", "pio", "csm_share", "csm_share_cpl7"]
+    elif case.get_value("MODEL") == "e3sm":
+        libs = ["gptl", "mct", "pio", "csm_share", "smartredis"]
     else:
         libs = ["gptl", "mct", "pio", "csm_share"]
 
