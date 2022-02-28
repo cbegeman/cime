@@ -111,6 +111,16 @@ def _run_model_impl(case, lid, skip_pnl=False, da_cycle=0):
     cmd = case.get_mpirun_cmd(allow_unresolved_envvars=False)
     logger.info("run command is {} ".format(cmd))
 
+    # Generate database launch command
+    DB_NODES = case.get_value("DB_NODES")
+    if DB_NODES > 0:
+        JOB_IDS = case.get_value("JOB_IDS")
+        caseroot=case.get_value("CASEROOT")
+        JOB1 = JOB_IDS.split(', ')[0]
+        JOB_ID = JOB1.split(':')[1]
+        db_cmd = 'source activate SmartSim-v0.3.2 && python launch_db_for_e3sm.py -j {} -N {} -c {}'.format(JOB_ID,DB_NODES,caseroot)
+        run_cmd(db_cmd, verbose=True)
+
     rundir = case.get_value("RUNDIR")
 
     # MPIRUN_RETRY_REGEX allows the mpi command to be reattempted if the
