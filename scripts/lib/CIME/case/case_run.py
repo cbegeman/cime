@@ -114,16 +114,21 @@ def _run_model_impl(case, lid, skip_pnl=False, da_cycle=0):
     # Generate database launch command
     DB_NODES = case.get_value("DB_NODES")
     if DB_NODES > 0:
-        run_cmd('source activate SmartSim-v0.3.2', verbose=True)
         JOB_IDS = case.get_value("JOB_IDS")
         caseroot=case.get_value("CASEROOT")
         JOB1 = JOB_IDS.split(', ')[0]
         JOB_ID = JOB1.split(':')[1]
         logger.info("job_ids is {}, job_id is {}".format(JOB_IDS,JOB_ID))
-        db_cmd = 'python launch_db_for_e3sm.py -j {} -N {} -c {}'.format(JOB_ID,DB_NODES,caseroot)
-        cmd = '{} && {}'.format(db_cmd,cmd)
-        #run_cmd(db_cmd, verbose=True)
-
+        #db_cmd = 'python launch_db_in_e3sm_alloc.py -j {} -N {} -c {}'.format(
+        #         JOB_ID,DB_NODES,caseroot)
+        db_cmd = 'python launch_db_for_e3sm_new_alloc.py -N {}'.format(DB_NODES)
+        conda_cmd = '{} {}'.format('conda run -n SmartSim-v0.3.2',db_cmd)
+        run_cmd(conda_cmd, verbose=True)
+        with open('db_debug.log') as f:
+            lines = f.readlines()
+            logger.info("{} ".format(lines[0]))
+            os.environ['SSDB'] = lines[0].split('=')[1]
+        logger.info("SSDB = {} ".format(os.environ.get('SSDB')))
     rundir = case.get_value("RUNDIR")
 
     # MPIRUN_RETRY_REGEX allows the mpi command to be reattempted if the
